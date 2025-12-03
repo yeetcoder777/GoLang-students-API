@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/siddhesht795/studentApiGo/internal/config"
+	"github.com/siddhesht795/studentApiGo/internal/http/handlers/student"
 )
 
 func main() {
@@ -26,9 +27,7 @@ func main() {
 	// router set up
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome to students api"))
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
 	//setup server
 	server := http.Server{
@@ -51,7 +50,7 @@ func main() {
 
 	<-done
 
-	slog.Info("Shutting down the server")
+	slog.Info("\nShutting down the server")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
