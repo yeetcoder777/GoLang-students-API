@@ -12,6 +12,7 @@ import (
 
 	"github.com/siddhesht795/studentApiGo/internal/config"
 	"github.com/siddhesht795/studentApiGo/internal/http/handlers/student"
+	"github.com/siddhesht795/studentApiGo/internal/storage/sqlite"
 )
 
 func main() {
@@ -24,10 +25,18 @@ func main() {
 	// load config
 	cfg := config.MustLoad()
 
+	// database set up
+	storage, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slog.Info("Storage initialized", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
+
 	// router set up
 	router := http.NewServeMux()
 
-	router.HandleFunc("POST /api/students", student.New())
+	router.HandleFunc("POST /api/students", student.New(storage))
 
 	//setup server
 	server := http.Server{
